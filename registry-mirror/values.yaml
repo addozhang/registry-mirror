@@ -1,0 +1,13 @@
+# Default values for policy-as-code.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+namespace: pipy
+replicaCount: 1
+tag: "latest"
+port: 6443
+gui:
+  enabled: false
+  port: 6060
+logLevel: info 
+
+repoURL: "http://192.168.1.101:6060/repo/registry-mirror/"

@@ -1,0 +1,5 @@
+{
+  "registries": {
+    "gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd": "registry.gitlab.cn/flomesh/registry-mirror/tekton-pipeline"
+  }
+}

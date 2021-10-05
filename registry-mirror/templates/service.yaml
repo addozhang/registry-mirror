@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: pipy
+  ports:
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: {{ .Values.port | default 6443}}
+  {{- if .Values.gui.enabled }}    
+  - name: gui
+    protocol: TCP
+    port: {{ .Values.gui.port }}
+    targetPort: {{ .Values.gui.port }}
+  {{- end }}  

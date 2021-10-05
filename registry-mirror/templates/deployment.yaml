@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "registry-mirror.labels" . | indent 4 }}
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: pipy
+  template:
+    metadata:
+      labels:
+        app: pipy
+    spec:
+      containers: 
+        - name: pipy
+          image: flomesh/pipy-pjs:{{ .Values.tag }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LISTENING_PORT
+              value: {{ .Values.port | default 6443 | quote}}
+          args:
+            - "pipy"
+            - "{{ required "Must provide target script URL." .Values.repoURL}}"
+            {{- if .Values.gui.enabled }}
+            - "--gui-port={{ .Values.gui.port }}" 
+            {{- end }}
+            - "--log-level={{ .Values.logLevel }}"
+          ports:
+          {{- if .Values.gui.enabled }}
+          - name: gui
+            containerPort: {{ .Values.gui.port }}
+            protocol: TCP
+          {{- end }}
+          - name: https
+            containerPort: {{ .Values.port | default 6443}}
+            protocol: TCP
+          volumeMounts:
+            - readOnly: true
+              mountPath: /certs
+              name: certs
+      volumes:
+        - name: certs
+          secret:
+            secretName: {{ template "webhook.name" .}}-certs
